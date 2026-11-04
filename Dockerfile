@@ -4,7 +4,7 @@
 # ============================================================
 
 # --- Étape 1 : "build" — on installe UNIQUEMENT ce qu'il faut pour la prod
-FROM node:22-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /app
 # package*.json copiés AVANT le code : cette couche est mise en cache
 # tant que les dépendances ne changent pas
@@ -12,7 +12,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 # --- Étape 2 : image finale propre — on ne garde que le strict nécessaire
-FROM node:22-alpine
+FROM node:26-alpine
 ENV NODE_ENV=production
 WORKDIR /app
 # npm/npx ne servent pas en prod (CMD appelle node directement) :
