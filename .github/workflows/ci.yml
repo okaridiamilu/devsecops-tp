@@ -1,0 +1,66 @@
+name: CI
+
+# Déclencheurs : push sur main et pull_request uniquement
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Moindre privilège : la CI ne peut LIRE que le code, rien d'autre
+permissions:
+  contents: read
+
+# Une seule exécution par branche : la plus récente annule la précédente
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # npm ci : install reproductible depuis package-lock.json (jamais npm install en CI)
+      - run: npm ci
+      - run: npm test
+
+  deps-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Rouge si une faille HIGH ou CRITICAL existe dans les dépendances
+      - run: npm audit --audit-level=high
+
+  image:
+    needs: [test, deps-audit] # l'image n'est construite que si tests + audit sont verts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: devsecops-tp:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      # Action tierce ÉPINGLÉE PAR SHA (incident trivy-action, mars 2026 :
+      # 76 tags sur 77 redirigés vers du code malveillant)
+      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: devsecops-tp:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1' # le job échoue sur toute CVE HIGH/CRITICAL corrigible

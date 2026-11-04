@@ -1,0 +1,16 @@
+{
+  "rules": [
+    {
+      "rulePriority": 1,
+      "description": "Ne garde que les 10 images les plus récentes (les autres sont expirées)",
+      "selection": {
+        "tagStatus": "any",
+        "countType": "imageCountMoreThan",
+        "countNumber": 10
+      },
+      "action": {
+        "type": "expire"
+      }
+    }
+  ]
+}

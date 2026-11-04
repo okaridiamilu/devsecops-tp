@@ -1,0 +1,16 @@
+.git
+.gitignore
+.github
+node_modules
+.env
+.env.*
+!.env.example
+coverage
+*.log
+npm-debug.log*
+tests
+Dockerfile
+Dockerfile.naif
+.dockerignore
+README.md
+aws
