@@ -39,7 +39,7 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v2
 
       # 3. Build + push de l'image taguée par le SHA du commit, jamais "latest"
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - uses: docker/build-push-action@v6
         with:
           context: .
