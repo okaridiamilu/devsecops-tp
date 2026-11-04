@@ -4,6 +4,24 @@ const _ = require('lodash');
 
 const app = express();
 
+// Rate limiting minimal en memoire (100 requetes / 15 min / IP) :
+// evite le brute force sur les routes publiques (alerte CodeQL js/missing-rate-limiting)
+const RATE_WINDOW_MS = 15 * 60 * 1000;
+const RATE_MAX = 100;
+const hits = new Map();
+app.use((req, res, next) => {
+  const now = Date.now();
+  let entry = hits.get(req.ip);
+  if (!entry || now - entry.start > RATE_WINDOW_MS) {
+    entry = { start: now, count: 0 };
+    hits.set(req.ip, entry);
+  }
+  entry.count += 1;
+  if (entry.count > RATE_MAX) return res.status(429).send('Trop de requetes, reessayez plus tard');
+  next();
+});
+
+
 // Échappe les caractères spéciaux HTML : un nom d'utilisateur est
 // affiché comme du TEXTE, jamais interprété comme du code (anti-XSS).
 function escapeHtml(value) {
