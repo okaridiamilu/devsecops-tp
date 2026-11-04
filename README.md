@@ -8,10 +8,10 @@ code, pipeline CI durci, image Docker optimisée et coûts AWS.
 
 ## Badges
 
-[![CI](https://github.com/<ton-user>/devsecops-tp/actions/workflows/ci.yml/badge.svg)](https://github.com/<ton-user>/devsecops-tp/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/<ton-user>/devsecops-tp/actions/workflows/codeql.yml/badge.svg)](https://github.com/<ton-user>/devsecops-tp/actions/workflows/codeql.yml)
+[![CI](https://github.com/okaridiamilu/devsecops-tp/actions/workflows/ci.yml/badge.svg)](https://github.com/okaridiamilu/devsecops-tp/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/okaridiamilu/devsecops-tp/actions/workflows/codeql.yml/badge.svg)](https://github.com/okaridiamilu/devsecops-tp/actions/workflows/codeql.yml)
 
-*(remplace `<ton-user>` par ton identifiant GitHub)*
+*(remplace `okaridiamilu` par ton identifiant GitHub)*
 
 ## Lancer en local
 
