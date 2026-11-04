@@ -27,7 +27,7 @@ jobs:
       contents: read
       id-token: write # OIDC : des droits AWS temporaires, AUCUNE clé stockée
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # 1. Droits AWS temporaires via OIDC (rôle IAM trusté sur le repo GitHub)
       - uses: aws-actions/configure-aws-credentials@v4
