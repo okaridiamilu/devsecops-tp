@@ -93,13 +93,15 @@ Mesuré en local (`docker images`, `docker history`, Trivy 0.74.0) :
 | Image | Taille | Nb de couches | CVE CRITICAL | CVE HIGH |
 |---|---|---|---|---|
 | **Naïve** (`Dockerfile.naif`, `node:22` Debian + `COPY . .` + `npm install`) | **1,84 Go** | 16 | **20** | **532** |
-| **Optimisée** (multi-stage `node:22-alpine`, `npm ci --omit=dev`, `USER node`) | **250 Mo** | 17 | **0** | **10** |
+| **Optimisée** (multi-stage `node:22-alpine`, `npm ci --omit=dev`, npm retiré, `USER node`) | **250 Mo** | 17 | **0** | **0** |
 
-(Trivy 0.74.0, `--severity HIGH,CRITICAL`, mesuré en local. Les 10 HIGH restantes
-dans l'image optimisée viennent de Node.js lui-même (brace-expansion, ip-address,
-pacote, picomatch, sigstore…) ; le job CI `image` bloque sur les HIGH/CRITICAL
-**corrigeables** grâce à `ignore-unfixed: true` + `exit-code: '1'`. Sur une image
-à jour, le scan retombe à 0 — valeurs du support : 41 CVE → 0.)
+(Trivy 0.74.0, `--severity HIGH,CRITICAL --ignore-unfixed`, mesuré en local :
+`trivy image --exit-code 1` renvoie 0. Pour arriver à 0 HIGH, `npm`/`npx` sont
+retirés de l'image finale — ils ne servent pas en prod puisque le conteneur
+lance `node` directement — ce qui élimine les CVE internes à npm embarqué
+(brace-expansion, ip-address, pacote, picomatch, sigstore…). Le job CI `image`
+bloque sur toute HIGH/CRITICAL corrigeable grâce à `ignore-unfixed: true` +
+`exit-code: '1'`.)
 
 Réponses aux questions :
 

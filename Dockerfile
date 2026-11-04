@@ -15,6 +15,9 @@ RUN npm ci --omit=dev
 FROM node:22-alpine
 ENV NODE_ENV=production
 WORKDIR /app
+# npm/npx ne servent pas en prod (CMD appelle node directement) :
+# on les retire pour reduire la surface d'attaque (CVE internes a npm)
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 # On ne recopie que les node_modules de prod depuis l'étape deps
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
